@@ -1,4 +1,5 @@
-var user = require('user');
+var user = require('user'),
+	log = require('logger')(module);
 
 var  run = function(){
 	var tom = new user("Tom");
@@ -11,5 +12,6 @@ if(module.parent){
 	eports.run = run;
 }
 else{
+	log("start executing...");
 	run();
 }
