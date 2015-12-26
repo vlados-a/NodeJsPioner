@@ -1,4 +1,4 @@
-var user = require('./user');
+var user = require('user');
 
 var  run = function(){
 	var tom = new user("Tom");
