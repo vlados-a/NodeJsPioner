@@ -13,8 +13,11 @@ server.emit = function(event){
 }
 
 server.on('request', function(req, res){
+	console.log("Headers:");
+	console.log( req.headers);
 	var urlParsed = url.parse(req.url, true);
 	if(urlParsed.pathname == '/echo' && urlParsed.query.message){
+		res.setHeader('Cache-control', 'no-cache');
 		res.end(urlParsed.query.message);
 	}
 	else{
