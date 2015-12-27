@@ -1,5 +1,6 @@
 var http = require('http'),
-	util = require('util');
+	util = require('util'),
+	url = require('url');
 
 var server = new http.Server();
 
@@ -11,8 +12,15 @@ server.emit = function(event){
 	emit.apply(server, arguments);
 }
 
-
-var counter = 0;
 server.on('request', function(req, res){
-	res.end(util.format("Hello, World! Request count: %d", ++counter));
+	var urlParsed = url.parse(req.url, true);
+	if(urlParsed.pathname == '/echo' && urlParsed.query.message){
+		res.end(urlParsed.query.message);
+	}
+	else{
+		res.statusCode = 404;
+		res.end("Page not found((");
+	}
+	//console.log(urlParsed);
+	//res.end(urlParsed.toString());
 });
