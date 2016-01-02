@@ -1,5 +1,5 @@
 var http = require('http'),
-	log = require('winston'),
+	log = require('./log')(module),
 	r = require('./request')
 
 var server = http.createServer();

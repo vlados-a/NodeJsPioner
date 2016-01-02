@@ -1,5 +1,5 @@
 var url = require('url'),
-	log = require('winston');
+	log = require('./log')(module);
 module.exports = function(req, res){
 	var urlParsed = url.parse(req.url, true);
 	log.info("Got request", req.method, req.url);
