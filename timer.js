@@ -1,15 +1,13 @@
-var http = require('http');
+var fs = require('fs');
 
-var server = http.createServer(function(req, res){
-	res.end('Hello world');
+fs.open(__filename, 'r', function(err, res){
+	console.log('IO');
 });
 
-setTimeout(function(){
-	server.close();
-	console.log('Server closed');
-}, 3000);
+setImmediate(function(){
+	console.log('immediate');
+});
 
-var timer = setInterval(function(){
-	console.log('Working well');
-}, 1000);
-timer.unref();
+process.nextTick(function(){
+	console.log('nextTick');
+});
