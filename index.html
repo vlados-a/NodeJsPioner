@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Chat</title>
+</head>
+<body>
+	<div >
+		<input type="text" placeholder = "Type your message here" id = "textbox">
+		<button id="button">Sent</button>
+	</div>
+	<div >
+		<ul id="list">
+			
+		</ul>
+	</div>
+	<script>
+		function Messeger(options){
+			var self = this;
+			self.list = document.getElementById(options.listId);
+			self.button = document.getElementById(options.buttonId);
+			self.textbox = document.getElementById(options.textboxId);
+			self.addMessage = function(message){
+				var newLi = document.createElement("li");
+				newLi.textContent = message;
+				self.list.appendChild(newLi);
+			}
+			self.button.onclick = function(){
+				var message = self.textbox.value;
+				sentMessage(message);
+				self.textbox.value = "";
+			}
+
+			
+			var sentMessage = function(message){
+				console.log("I'm sended message: " + message);
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", "/publish", true);
+				var t = JSON.stringify({message: message});
+				console.log(t);
+				xhr.send(t);
+			}
+			var getMessages = function(){
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", "/subscribe", true);
+				xhr.onload = function(){
+					var text = this.responseText;
+					if(text) self.addMessage(text);
+					getMessages();
+				}
+				xhr.onerror = xhr.onabort = function(){
+					setTimeout(getMessages, 500);
+				}
+				xhr.send('');
+			}
+
+			getMessages();
+		}
+
+		var messenger = new Messeger({textboxId: "textbox", buttonId: "button", listId: "list"});
+	</script>
+</body>
+</html>
