@@ -9,6 +9,7 @@ http.createServer(function(req, res){
 			}
 			res.statusCode = 500;
 			res.end('File not found');
+			return;
 		})
 	}
 }).listen(1337, '127.0.0.1');
