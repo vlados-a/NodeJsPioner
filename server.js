@@ -1,29 +1,9 @@
 var http = require('http'),
-	util = require('util'),
-	url = require('url');
+	debug = require('debug')('server'),
+	r = require('./request')
 
-var server = new http.Server();
-
+var server = http.createServer();
+server.on('request', r);
 server.listen(1337, '127.0.0.1');
 
-var emit = server.emit;
-server.emit = function(event){
-	console.log(event);
-	emit.apply(server, arguments);
-}
-
-server.on('request', function(req, res){
-	console.log("Headers:");
-	console.log( req.headers);
-	var urlParsed = url.parse(req.url, true);
-	if(urlParsed.pathname == '/echo' && urlParsed.query.message){
-		res.setHeader('Cache-control', 'no-cache');
-		res.end(urlParsed.query.message);
-	}
-	else{
-		res.statusCode = 404;
-		res.end("Page not found((");
-	}
-	//console.log(urlParsed);
-	//res.end(urlParsed.toString());
-});
+debug("Server is running");
