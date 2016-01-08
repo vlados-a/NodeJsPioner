@@ -12,6 +12,7 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+app.engine('ejs', require('ejs-locals'));
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
@@ -56,5 +57,8 @@ app.use(function(err, req, res, next) {
   });
 });
 
+app.listen(3000, function(){
+  console.log('Application is listening port 3000');
+});
 
 module.exports = app;
