@@ -1,37 +1,13 @@
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
+var mongoose = require('mongoose');
+var config = require('./config');
+mongoose.connect(config.get('mongoose:uri'), config.get('mongoose:options'));
 
-// Connection URL
-var url = 'mongodb://localhost:27017/chat';
-var insertDocuments = function(db, callback) {
-  // Get the documents collection
-  var collection = db.collection('documents');
-  // Insert some documents
-  collection.insertMany([
-    {a : 1}, {a : 2}, {a : 3}
-  ], function(err, result) {
-    assert.equal(err, null);
-    assert.equal(3, result.result.n);
-    assert.equal(3, result.ops.length);
-    console.log("Inserted 3 documents into the document collection");
-    callback(result);
-  });
-}
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
-  var collection = db.collection('documents');
-  collection.remove({}, function(err, affected){
-  	  insertDocuments(db, function(){
-	  	console.log('success');
-	  	collection.count(function(error, count){
-	  		console.log("count: %s", count);
-	  		collection.find({}).toArray(function(err, result){
-	  			console.dir(result);
-	  			db.close();
-	  		});
-	  	});
-	  });
-  });
+var Cat = mongoose.model('Cat', { name: String });
+
+var kitty = new Cat({ name: 'Zildjian' });
+console.log(kitty);
+kitty.save(function (err, kitty, affected) {
+  if (err) console.log('meow((');
+  else console.log('meow))');
+  console.log(arguments);
 });
