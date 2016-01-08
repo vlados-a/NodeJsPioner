@@ -5,7 +5,8 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , config = require('config');
+  , config = require('config')
+  , log = require('libs/log')(module);
 
 var app = module.exports = express.createServer();
 
@@ -30,6 +31,7 @@ app.configure(function(){
   });
   app.use(function(req, res, next){
     if(req.url == '/admin'){
+      log.info('Request to admin');
       res.end('you are on admin page');
     }
     else{
@@ -56,9 +58,8 @@ app.configure(function(){
     res.send(404, 'Page not found');
   });
   app.use(function(err, req, res, next){
-    console.log(app.get('env'));
     if(app.get('env') == 'development'){
-      res.end('Sorry. Some error ' + err.message);  
+      res.end('Sorry. Some error ' + err.message); 
     }
     else{
       var handler = express.errorHandler();
