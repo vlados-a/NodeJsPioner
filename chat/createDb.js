@@ -1,13 +1,12 @@
-var mongoose = require('mongoose');
-var config = require('./config');
-mongoose.connect(config.get('mongoose:uri'), config.get('mongoose:options'));
+var User = require('models/user').User;
 
-var Cat = mongoose.model('Cat', { name: String });
+var vlad = new User({
+  username: 'Vlad',
+  password: 'secret'
+});
 
-var kitty = new Cat({ name: 'Zildjian' });
-console.log(kitty);
-kitty.save(function (err, kitty, affected) {
-  if (err) console.log('meow((');
-  else console.log('meow))');
-  console.log(arguments);
+vlad.save(function(err, effected){
+  if(!err) console.log('success');
+
+  console.log(effected);
 });
