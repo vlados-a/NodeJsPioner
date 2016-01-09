@@ -8,8 +8,8 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
-var config = require('./config');
-
+var config = require('./config'),
+    HttpError = require('./error').HttpError;
 var app = express();
 
 // view engine setup
@@ -28,15 +28,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
-var user = require('models/user').User;
-app.get('/usersInfo', function(req,res,next){
-  user.find({}, function(err, data){
-    if(err) next(err);
-    else{
-      res.json(data);
-    }
-  });
-});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
