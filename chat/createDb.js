@@ -2,34 +2,40 @@ var User = require('models/user').User,
     mongoose = require('libs/mongoose'),
     asyn = require('async');
 
-mongoose.connection.on('open', function(){
-  var db = mongoose.connection.db;
+function open(callback){
+  mongoose.connection.on('open', callback);
+}
 
-  db.dropDatabase(function(err){
-    if(err) throw err;
-    console.log('OK');
-    asyn.parallel([
-      function(callback){
-        var vlad = new User({username: 'Vlad', password: 'secret'});
-        vlad.save(function(err){
-          callback(err, vlad);
-        });
-      },
-      function(callback){
-        var yura = new User({username: 'Yura', password: 'secret'});
-        yura.save(function(err){
-          callback(err, yura);
-        });
-      },
-      function(callback){
-        var olya = new User({username: 'Olya', password: 'secret'});
-        olya.save(function(err){
-          callback(err, olya);
-        });
-      }
-    ], function(err, results){
-        console.log(results);
-        mongoose.disconnect();
-    });
-  });
-})
+function dropDb(callback){
+  var db = mongoose.connection.db;
+  db.dropDatabase(callback);
+}
+
+
+
+function addUsers(callback){
+  require('models/user');
+  var users = [
+    {username: 'Vlad', password: 'secret'},
+    {username: 'Yura', password: 'secret'},
+    {username: 'Olya', password: 'secret'}
+  ];
+  asyn.each(users, function(userData, callback){
+    var user = new User(userData);
+    user.save(callback);
+  }, callback);
+}
+
+function close(){
+  mongoose.disconnect();
+}
+
+asyn.series([
+  open,
+  dropDb,
+  addUsers,
+  close
+], function(err, results){
+    console.log(arguments);
+    console.log('Ok');
+});
