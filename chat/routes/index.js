@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 var HttpError = require('../error').HttpError,
-    user = require('models/user').User;
+    user = require('models/user').User,
+    ObjectId = require('mongodb').ObjectId;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -16,13 +17,21 @@ router.get('/usersInfo', function(req,res,next){
   });
 });
 router.get('/usersInfo/:id', function(req, res, next){
-  user.findById(req.params.id, function(err, data){
+  try{
+    var id = new ObjectId(req.params.id);
+  }
+  catch(e){
+    next(new HttpError(404, 'Incorrect user id'));
+  }
+  user.findById(id, function(err, data){
     if(err) next(err);
-    if(!data){
-      next(new HttpError(404, 'User not found'));
-    }
     else{
-      res.json(data);
+      if(!data){
+        next(new HttpError(404, 'User not found'));
+      }
+      else{
+        res.json(data);
+      }
     }
   });
 });
