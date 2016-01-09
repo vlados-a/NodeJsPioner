@@ -7,11 +7,10 @@ asyn.series([
   open,
   dropDb,
   requireModels,
-  addUsers,
-  close
+  addUsers
 ], function(err, results){
     console.log(arguments);
-    console.log('Ok');
+    close();
 });
 
 function open(callback){
@@ -46,4 +45,5 @@ function addUsers(callback){
 
 function close(){
   mongoose.disconnect();
+  console.log('Ok');
 }
