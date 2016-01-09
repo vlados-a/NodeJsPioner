@@ -2,6 +2,18 @@ var User = require('models/user').User,
     mongoose = require('libs/mongoose'),
     asyn = require('async');
 
+
+asyn.series([
+  open,
+  dropDb,
+  requireModels,
+  addUsers,
+  close
+], function(err, results){
+    console.log(arguments);
+    console.log('Ok');
+});
+
 function open(callback){
   mongoose.connection.on('open', callback);
 }
@@ -11,7 +23,13 @@ function dropDb(callback){
   db.dropDatabase(callback);
 }
 
+function requireModels(callback){
+  require('models/user');
 
+  asyn.each(Object.keys(mongoose.models), function(modelName, callback){
+    mongoose.models[modelName].ensureIndexes(callback);
+  }, callback);
+}
 
 function addUsers(callback){
   require('models/user');
@@ -29,13 +47,3 @@ function addUsers(callback){
 function close(){
   mongoose.disconnect();
 }
-
-asyn.series([
-  open,
-  dropDb,
-  addUsers,
-  close
-], function(err, results){
-    console.log(arguments);
-    console.log('Ok');
-});
