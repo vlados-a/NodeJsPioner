@@ -6,9 +6,9 @@ var HttpError = require('../error').HttpError,
     ObjectId = require('mongodb').ObjectId;
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+/*router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
-});
+});*/
 
 router.get('/usersInfo', function(req,res,next){
   user.find({}, function(err, data){

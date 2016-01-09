@@ -9,5 +9,14 @@
 				}
 			}
 		}
+	},
+	"session": {
+		"secret": "vlados",
+		"key": "sid",
+		"cookie":{
+			"path":"/",
+			"httponly":true,
+			"maxAge":null
+		}
 	}
 }
