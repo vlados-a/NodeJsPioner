@@ -8,11 +8,10 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var sessionLib = require('libs/sessionStorage');
 var config = require('./config'),
     HttpError = require('./error').HttpError,
-    session = require('express-session'),
-    MongoStore = require('connect-mongo')(session),
-    mongoose = require('libs/mongoose');
+    session = sessionLib.session;
 var app = express();
 
 // view engine setup
@@ -32,7 +31,7 @@ app.use(session({
   cookie: config.get('session:cookie'),
   saveUninitialized: false,
   resave: false,
-  store: new MongoStore({mongooseConnection: mongoose.connection})
+  store: sessionLib.sessionStorage
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('middleware/sendHttpError'));
@@ -83,6 +82,6 @@ var server = http.listen(config.get('port'), function(){
   console.log('Application is listening port %s', config.get('port'));
 });
 
-var io = require('socket')(server, logger);
+var io = require('socket')(server);
 
 module.exports = app;
