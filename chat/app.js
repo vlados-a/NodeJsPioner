@@ -36,7 +36,7 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('middleware/sendHttpError'));
-
+app.use(require('middleware/loadUser'));
 app.use('/', routes);
 app.use('/users', users);
 

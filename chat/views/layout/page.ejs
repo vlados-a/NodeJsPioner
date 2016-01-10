@@ -16,4 +16,11 @@
 		<%-body -%>
 	</div>
 </body>
+<script type="text/javascript">
+	(function($){
+		window.logout = function(){
+			$('<form method=POST action=/logout>').submit();
+		}
+	})(jQuery);
+</script>
 </html>

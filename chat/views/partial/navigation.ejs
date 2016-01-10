@@ -12,7 +12,11 @@
 		<div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav navbar-right">
 	      <li>
-					<a href="/login">Log in</a>
+					<% if (user) { %>
+						<a href="#" onclick="logout()">Log Out</a>
+					<% }else{ %>
+						<a href="/login">Log in</a>
+					<% } %>
 				</li>
 	    </ul>
 		</div>
