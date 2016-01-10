@@ -78,8 +78,16 @@ else{
 }
 
 
-app.listen(config.get('port'), function(){
+var http = require('http').Server(app);
+var server = http.listen(config.get('port'), function(){
   console.log('Application is listening port %s', config.get('port'));
+});
+var io = require('socket.io').listen(server);
+io.on('connection', function (socket) {
+  socket.on('message', function (data,cd) {
+    cd(data);
+    socket.broadcast.emit('message', data);
+  });
 });
 
 module.exports = app;
