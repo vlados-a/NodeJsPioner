@@ -3,9 +3,17 @@
 <head>
 	<title><%=blocks.title%></title>
 	<link rel='stylesheet' href='/stylesheets/style.css' />
+	<link rel="stylesheet" href="/vendor/bower_components/bootstrap/dist/css/bootstrap.css" charset="utf-8">
+
+	<script type="text/javascript" src="/vendor/bower_components/jquery/dist/jquery.js">
+	</script>
+	<script type="text/javascript" src="/vendow/bower_components/bootstrap/dist/js/bootstrap.js">
+	</script>
 </head>
 <body>
 	<%-partial('../partial/navigation') %>
-	<%-body -%>
+	<div class="container">
+		<%-body -%>
+	</div>
 </body>
 </html>
