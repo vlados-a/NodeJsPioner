@@ -40,10 +40,6 @@ app.use(require('middleware/sendHttpError'));
 app.use('/', routes);
 app.use('/users', users);
 
-app.use(function(req, res, next){
-  req.session.number = req.session.number + 1 || 1;
-  res.send('Visits: ' + req.session.number);
-});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

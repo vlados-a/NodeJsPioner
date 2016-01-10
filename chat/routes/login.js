@@ -1,5 +1,6 @@
 var User = require('models/user').User,
     HttpError = require('error').HttpError,
+    AuthError = require('models/user').AuthError,
     async = require('async');
 
 exports.get = function(req, res, next){
@@ -10,30 +11,14 @@ exports.post = function(req, res, next){
   var username = req.body.username,
       password = req.body.password;
 
-  async.waterfall([
-    function(callback){
-      user.findOne({username: username},callback);
-    },
-    function(user, callback){
-      if(user){
-        if(user.checkPassword(password)){
-          callback(null, user);
-        }
-        else{
-          next(new HttpError(403, "Incorrect password"));
-        }
+  User.authorize(username, password, function(err, user){
+    if(err){
+      if(err instanceof AuthError){
+        return next(new HttpError(403, err.message));
       }
-      else{
-        var user = new User({username: username, password: password});
-        user.save(function(err, u){
-          if(err) return next(err);
-          callback(null, user)
-        });
-      }
+      return next(err);
     }
-  ], function(err, user){
-    if(err) return next(err);
-    req.session.user_id = user._id;
+    req.session.user = user._id;
     res.send({});
   });
 }
