@@ -6,11 +6,10 @@
   </ul>
   <form>
     <input type="text" class="form-control" placeholder="Your message..">
-    <button type="submit" name="button" class="btn btn-primary">Post</button>
   </form>
 </div>
 
-<script src="/socket.io/socket.io.js"></script>
+<script src="/vendor/bower_components/socket.io-client/socket.io.js"></script>
 <script>
   (function($){
     var socket = io();
@@ -23,7 +22,7 @@
       var text = input.val();
       input.val('');
       socket.emit('message', text, function(data){
-        addMessage(data);        
+        addMessage(data);
       });
       return false;
     });
