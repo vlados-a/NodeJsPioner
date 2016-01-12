@@ -2,16 +2,18 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var sessionLib = require('libs/sessionStorage');
+var session = sessionLib.session;
+var sessionStore = sessionLib.sessionStore;
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
-var sessionLib = require('libs/sessionStorage');
+//var sessionLib = require('libs/sessionStorage');
 var config = require('./config'),
-    HttpError = require('./error').HttpError,
-    session = sessionLib.session;
+    HttpError = require('./error').HttpError;
 var app = express();
 
 // view engine setup
@@ -31,7 +33,7 @@ app.use(session({
   cookie: config.get('session:cookie'),
   saveUninitialized: false,
   resave: false,
-  store: sessionLib.sessionStorage
+  store: sessionStore
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('middleware/sendHttpError'));
@@ -83,5 +85,6 @@ var server = http.listen(config.get('port'), function(){
 });
 
 var io = require('socket')(server);
+app.set('io', io);
 
 module.exports = app;

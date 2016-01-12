@@ -17,7 +17,7 @@
   var form = $('#room form');
 
   var socket = io('', {
-    reconnect: false
+    reconnect: true
   });
 
   socket
@@ -54,10 +54,10 @@
         }
       });
 
-  function sendMessage() {
+  function sendMessage(username) {
     var text = input.val();
-    socket.emit('message', text, function() {
-      printMessage("я> " + text);
+    socket.emit('message', text, function(username) {
+      printMessage(username + ">" + text);
     });
 
     input.val('');

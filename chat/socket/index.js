@@ -1,4 +1,4 @@
-var log = require('morgan');
+var log = require('winston');
 var config = require('config');
 var connect = require('connect');
 var async = require('async');
@@ -25,11 +25,11 @@ function loadSession(sid, callback) {
 function loadUser(session, callback) {
 
   if (!session.user) {
-    log.debug("Session %s is anonymous", session.id);
+    //log.debug("Session %s is anonymous", session.id);
     return callback(null, null);
   }
 
-  log.debug("retrieving user ", session.user);
+  //log.debug("retrieving user ", session.user);
 
   User.findById(session.user, function(err, user) {
     if (err) return callback(err);
@@ -37,7 +37,7 @@ function loadUser(session, callback) {
     if (!user) {
       return callback(null, null);
     }
-    log.debug("user findbyId result: " + user);
+    //log.debug("user findbyId result: " + user);
     callback(null, user);
   });
 
@@ -49,19 +49,16 @@ module.exports = function(server) {
   io.set('logger', log);
 
   io.set('authorization', function(handshake, callback) {
+    console.log('authorization');
     async.waterfall([
       function(callback) {
         // сделать handshakeData.cookies - объектом с cookie
-        console.log('Start authorization');
         handshake.cookies = cookie.parse(handshake.headers.cookie || '');
         var sidCookie = handshake.cookies[config.get('session:key')];
-        console.log(sidCookie);
         var sid = cookieParser.signedCookie(sidCookie, config.get('session:secret'));
-        console.log('Sid: %s', sid);
         loadSession(sid, callback);
       },
       function(session, callback) {
-        console.log(session);
         if (!session) {
           callback(new HttpError(401, "No session"));
         }
@@ -73,7 +70,6 @@ module.exports = function(server) {
         if (!user) {
           callback(new HttpError(403, "Anonymous session may not connect"));
         }
-
         handshake.user = user;
         callback(null);
       }
@@ -92,45 +88,20 @@ module.exports = function(server) {
 
   });
 
-  io.sockets.on('session:reload', function(sid) {
-    var clients = io.sockets.clients();
-
-    clients.forEach(function(client) {
-      if (client.handshake.session.id != sid) return;
-
-      loadSession(sid, function(err, session) {
-        if (err) {
-          client.emit("error", "server error");
-          client.disconnect();
-          return;
-        }
-
-        if (!session) {
-          client.emit("logout");
-          client.disconnect();
-          return;
-        }
-
-        client.handshake.session = session;
-      });
-
-    });
-
-  });
-
   io.sockets.on('connection', function(socket) {
-
-    var username = socket.handshake.user.get('username');
-
-    socket.broadcast.emit('join', username);
-
+    var username = socket.request.user.get('username');
+    var userRoom = "user:" + username;
+    if(! io.sockets.adapter.rooms[userRoom]){
+      socket.join(userRoom);
+      socket.broadcast.emit('join', username);
+      socket.on('disconnect', function() {
+        socket.broadcast.emit('leave', username);
+      });
+    }
     socket.on('message', function(text, cb) {
       socket.broadcast.emit('message', username, text);
-      cb && cb();
-    });
-
-    socket.on('disconnect', function() {
-      socket.broadcast.emit('leave', username);
+      console.log(username);
+      cb && cb(username);
     });
 
   });
